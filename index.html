@@ -14,7 +14,7 @@
 <body data-theme="dark">
 <header class="topbar">
   <div class="logo"><span class="logo-mark"></span>PomoJd <small>foco real</small></div>
-  <div class="topbar-actions"><span class="today-line" id="topStreak"></span></div>
+  <div class="topbar-actions"><span class="today-line" id="topStreak"></span><span data-account></span></div>
 </header>
 <div class="shell">
 <nav class="sidebar">
@@ -24,6 +24,7 @@
   <a class="nav-link" data-page="stats" href="stats.html"><span class="glyph">▦</span><span class="label">Registro</span><span class="dot"></span></a>
   <div class="nav-section">Sistema</div>
   <a class="nav-link" data-page="settings" href="config.html"><span class="glyph">—</span><span class="label">Ajustes</span><span class="dot"></span></a>
+  <a class="nav-link" data-page="account" href="cuenta.html"><span class="glyph">◆</span><span class="label">Cuenta</span><span class="dot"></span></a>
   <div class="side-note"><strong>Sin prisa.</strong><br>El tiempo se guarda solo. Pulsa <span class="kbd">espacio</span> para empezar o parar.</div>
 </nav>
 <main class="main">
@@ -69,7 +70,7 @@
 </div>
 <nav class="tabbar"><a data-page="timer" href="index.html"><span class="glyph">●</span><span>Foco</span></a><a data-page="tasks" href="tareas.html"><span class="glyph">○</span><span>Tareas</span></a><a data-page="stats" href="stats.html"><span class="glyph">▦</span><span>Registro</span></a><a data-page="settings" href="config.html"><span class="glyph">—</span><span>Ajustes</span></a></nav>
 <div id="toasts"></div>
-<script src="js/db.js?v=3"></script><script src="js/ui.js?v=3"></script><script src="js/timer.js?v=3"></script>
+<script src="js/db.js?v=4"></script><script src="js/ui.js?v=3"></script><script src="js/auth.js?v=1"></script><script src="js/sync.js?v=1"></script><script src="js/timer.js?v=4"></script>
 <script>PomoUI.setActiveNav('timer');PomoTimer.initTimer();if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}</script>
 </body>
 </html>

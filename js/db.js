@@ -61,9 +61,15 @@ async function seedDefaults(){
 
 async function addSession(s){
   await initDB();
-  const doc = {id:uid(),type:'focus',project:'general',taskId:null,duration_min:25,actual_min:25,startedAt:Date.now(),endedAt:Date.now(),completed:true,notes:'',...s};
+  const doc = {id:uid(),type:'focus',project:'general',taskId:null,duration_min:25,actual_min:25,startedAt:Date.now(),endedAt:Date.now(),completed:true,notes:'',updated_at:Date.now(),...s,updated_at:Date.now()};
   await reqToPromise(tx('sessions','readwrite').put(doc));
+  try{ window.PomoSync && window.PomoSync.schedulePush(); }catch{}
   return doc.id;
+}
+async function putSession(doc){
+  await initDB();
+  if(!doc || !doc.id) return;
+  await reqToPromise(tx('sessions','readwrite').put({...doc, updated_at: doc.updated_at || Date.now()}));
 }
 async function getSessions({from=0,to=Date.now(),type=null,project=null,limit=200}={}){
   await initDB();
@@ -76,14 +82,22 @@ async function getSessions({from=0,to=Date.now(),type=null,project=null,limit=20
 async function clearSessions(){await initDB();await reqToPromise(tx('sessions','readwrite').clear());}
 async function addTask(t){
   await initDB();
-  const doc={id:uid(),title:'Sin título',project:'general',estimated_pomos:4,completed_pomos:0,done:false,createdAt:Date.now(),...t};
-  await reqToPromise(tx('tasks','readwrite').put(doc));return doc.id;
+  const doc={id:uid(),title:'Sin título',project:'general',estimated_pomos:4,completed_pomos:0,done:false,createdAt:Date.now(),updated_at:Date.now(),...t,updated_at:Date.now()};
+  await reqToPromise(tx('tasks','readwrite').put(doc));
+  try{ window.PomoSync && window.PomoSync.schedulePush(); }catch{}
+  return doc.id;
+}
+async function putTask(doc){
+  await initDB();
+  if(!doc || !doc.id) return;
+  await reqToPromise(tx('tasks','readwrite').put({...doc, updated_at: doc.updated_at || Date.now()}));
 }
 async function updateTask(id,patch){
   await initDB();
   const cur=await reqToPromise(tx('tasks').get(id));
   if(!cur) return;
-  await reqToPromise(tx('tasks','readwrite').put({...cur,...patch}));
+  await reqToPromise(tx('tasks','readwrite').put({...cur,...patch,updated_at:Date.now()}));
+  try{ window.PomoSync && window.PomoSync.schedulePush(); }catch{}
 }
 async function deleteTask(id){await initDB();await reqToPromise(tx('tasks','readwrite').delete(id));}
 async function getTasks({project=null,done=null}={}){
@@ -102,7 +116,7 @@ async function getSetting(key,def){
   const r=await reqToPromise(tx('settings').get(key)).catch(()=>undefined);
   return r===undefined?def:r.value;
 }
-async function setSetting(key,value){await initDB();await reqToPromise(tx('settings','readwrite').put({key,value}));}
+async function setSetting(key,value){await initDB();await reqToPromise(tx('settings','readwrite').put({key,value}));try{ if(window.PomoSync && window.PomoAuth && window.PomoAuth.user && key!=='current_task') window.PomoSync.schedulePush(); }catch{}}
 async function getAllSettings(){
   await initDB();
   const all=await reqToPromise(tx('settings').getAll())||[];
@@ -147,4 +161,4 @@ function exportCSV(sessions){
   sessions.forEach(s=>rows.push([s.id,s.type,s.project,s.duration_min,s.actual_min,new Date(s.startedAt).toISOString(),s.endedAt?new Date(s.endedAt).toISOString():'',s.completed?1:0]));
   return rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
 }
-window.PomoDB={initDB,addSession,getSessions,clearSessions,addTask,updateTask,deleteTask,getTasks,getProjects,getSetting,setSetting,getAllSettings,getStats,dayKey,exportCSV,uid};
+window.PomoDB={initDB,addSession,putSession,getSessions,clearSessions,addTask,putTask,updateTask,deleteTask,getTasks,getProjects,getSetting,setSetting,getAllSettings,getStats,dayKey,exportCSV,uid};

@@ -2,8 +2,34 @@
 let S={mode:'focus',dur:{focus:25*60,short:5*60,long:15*60},remaining:25*60,running:false,endAt:0,timerId:null,cycle:0,startedAt:null,taskId:null,project:'Estudio'};
 const CIRC=2*Math.PI*132;
 
+let _wakeLock = null;
+async function holdScreen(){
+  try{
+    if('wakeLock' in navigator && !document.hidden){
+      _wakeLock = await navigator.wakeLock.request('screen');
+      _wakeLock.addEventListener?.('release', ()=>{ _wakeLock = null; });
+    }
+  }catch{}
+}
+function freeScreen(){ try{ _wakeLock && _wakeLock.release(); }catch{} _wakeLock = null; }
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && S.running) holdScreen(); });
+
 async function initTimer(){
   await window.PomoDB.initDB();
+  try{ await window.PomoAuth.me(); }catch{}
+  // 1. sincronizar nube primero (si hay cuenta): baja sesiones, tareas y timer en curso
+  let serverRunning = null;
+  try{
+    if(window.PomoAuth.user){
+      const r = await window.PomoSync.fullSync();
+      serverRunning = r.running || null;
+    } else {
+      try{
+        const t = await fetch('/api/timer', {credentials:'same-origin'}).then(x=>x.json()).catch(()=>null);
+        if(t && t.ok) serverRunning = t.running;
+      }catch{}
+    }
+  }catch{}
   const st=await window.PomoDB.getAllSettings();
   S.dur={focus:(st.focus_min??25)*60,short:(st.short_min??5)*60,long:(st.long_min??15)*60};
   S.taskId=st.current_task||null;
@@ -12,6 +38,17 @@ async function initTimer(){
   bindTimerUI();
   await refreshTaskSelect();
   await refreshToday();
+  // 2. retomar timer de la nube (otro aparato o esta misma página tras cerrar)
+  if(serverRunning && serverRunning.ends_at > Date.now() + 5000){
+    S.mode = serverRunning.mode || 'focus';
+    S.project = serverRunning.project || S.project;
+    if(serverRunning.taskId) S.taskId = serverRunning.taskId;
+    S.startedAt = serverRunning.started_at;
+    S.remaining = Math.max(1, Math.round((serverRunning.ends_at - Date.now())/1000));
+    document.querySelectorAll('.mode-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.mode===S.mode));
+    startPause(true);
+    toast('Timer retomado de tu cuenta.');
+  }
   render();
 }
 function bindTimerUI(){
@@ -38,20 +75,35 @@ function switchMode(mode){
   document.querySelector('.ring')?.classList.toggle('break',mode!=='focus');
   render();
 }
-function startPause(){
-  if(S.running){pauseTick();S.running=false;}
+function startPause(fromServer){
+  if(S.running){pauseTick();S.running=false;freeScreen();pushServerTimerDelete();}
   else{
     if(!S.startedAt) S.startedAt=Date.now();
     S.running=true;S.endAt=Date.now()+S.remaining*1000;
     S.timerId=setInterval(tick,250);
-    if(S.mode==='focus') notifySilent('¡Enfoque iniciado! 🎯');
+    holdScreen();
+    pushServerTimer();
+    if(S.mode==='focus' && !fromServer) notifySilent('Foco iniciado. Sin prisa.');
   }
   render();
 }
+function pushServerTimer(){
+  try{
+    if(!window.PomoAuth || !window.PomoAuth.user) return;
+    fetch('/api/timer', {method:'PUT', headers:{'Content-Type':'application/json'}, credentials:'same-origin',
+      body: JSON.stringify({mode:S.mode, project:S.project, taskId:S.taskId, started_at:S.startedAt||Date.now(), ends_at:S.endAt, duration_sec:S.dur[S.mode]})}).catch(()=>{});
+  }catch{}
+}
+function pushServerTimerDelete(){
+  try{
+    if(!window.PomoAuth || !window.PomoAuth.user) return;
+    fetch('/api/timer', {method:'DELETE', credentials:'same-origin'}).catch(()=>{});
+  }catch{}
+}
 function pauseTick(){if(S.timerId)clearInterval(S.timerId);S.timerId=null;if(S.running){S.remaining=Math.max(0,Math.round((S.endAt-Date.now())/1000));}}
-function resetTimer(){pauseTick();S.running=false;S.remaining=S.dur[S.mode];S.startedAt=null;render();}
+function resetTimer(){pauseTick();S.running=false;freeScreen();pushServerTimerDelete();S.remaining=S.dur[S.mode];S.startedAt=null;render();}
 async function skip(){
-  pauseTick();S.running=false;
+  pauseTick();S.running=false;freeScreen();pushServerTimerDelete();
   await saveSession(false);
   nextMode(true);
 }
@@ -61,7 +113,7 @@ function tick(){
   if(S.remaining<=0) complete();
 }
 async function complete(){
-  pauseTick();S.running=false;
+  pauseTick();S.running=false;freeScreen();pushServerTimerDelete();
   await saveSession(true);
   const sound=await window.PomoDB.getSetting('sound',true);
   if(sound) window.PomoUI.beep(S.mode==='focus'?880:520,.25,S.mode==='focus'?3:2);
@@ -109,11 +161,9 @@ async function saveSession(completed){
     duration_min:durMin,actual_min:completed?durMin:actualMin,
     startedAt:start,endedAt:now,completed
   });
-  // sync a cloudflare si existe endpoint
-  try{
-    if(navigator.onLine) fetch('/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:S.mode,project:S.project,taskId:S.taskId,duration_min:durMin,actual_min:completed?durMin:actualMin,startedAt:start,endedAt:now,completed})}).catch(()=>{});
-  }catch{}
   S.startedAt=null;
+  // la nube se actualiza sola vía PomoSync.schedulePush (addSession) —
+  // y el timer en curso vive en /api/timer mientras corre.
 }
 function render(){
   const m=Math.floor(S.remaining/60),s=S.remaining%60;
