@@ -1,1 +1,1 @@
-{"name":"PomoJd — Enfócate","short_name":"PomoJd","description":"Temporizador pomodoro sobrio con registro de horas reales.","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#08080A","theme_color":"#08080A"}
+{"name":"PomoJd — Enfócate","short_name":"PomoJd","description":"Temporizador pomodoro sobrio con registro de horas reales.","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#08080A","theme_color":"#08080A","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
