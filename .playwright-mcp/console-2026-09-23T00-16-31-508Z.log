@@ -1,0 +1,4 @@
+[     107ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://juanjosegalviz-1.github.io/PomoJd/icon.png:0
+[     107ms] [WARNING] Error while trying to use the following icon from the Manifest: https://juanjosegalviz-1.github.io/PomoJd/icon.png (Download error or resource isn't a valid image) @ https://juanjosegalviz-1.github.io/PomoJd/?v=2:0
+[   23630ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://juanjosegalviz-1.github.io/PomoJd/icon.png:0
+[   23630ms] [WARNING] Error while trying to use the following icon from the Manifest: https://juanjosegalviz-1.github.io/PomoJd/icon.png (Download error or resource isn't a valid image) @ https://juanjosegalviz-1.github.io/PomoJd/?v=2:0
