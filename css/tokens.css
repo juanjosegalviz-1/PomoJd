@@ -8,11 +8,16 @@
   --ring-track:#E9E6DD; --ring-progress:#E5484D; --ring-break:#16A34A;
   --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1rem;
+  --fs-lg:1.25rem; --fs-xl:1.5rem; --fs-2xl:2rem;
   --fs-timer:clamp(3.5rem,12vw,6rem);
-  --sp-2:8px; --sp-4:16px; --sp-6:24px; --sp-8:32px;
-  --r-md:12px; --r-lg:16px; --r-full:999px;
-  --shadow-sm:0 1px 2px rgb(0 0 0/.06); --shadow-md:0 4px 12px rgb(0 0 0/.08);
-  --ease:cubic-bezier(.2,.8,.2,1);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-full:999px;
+  --shadow-sm:0 1px 2px rgb(0 0 0/.06);
+  --shadow-md:0 4px 12px rgb(0 0 0/.08);
+  --shadow-lg:0 12px 32px rgb(0 0 0/.12);
+  --maxw:1120px; --nav-h:64px; --tabbar-h:68px;
+  --ease:cubic-bezier(.2,.8,.2,1); --dur-fast:150ms; --dur-med:300ms;
 }
 [data-theme="dark"]{
   color-scheme: dark;

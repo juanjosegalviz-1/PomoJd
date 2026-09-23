@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PomoJd • Pomodoro</title>
+<meta name="description" content="PomoJd - Pomodoro limpio con base de datos local, tareas y estadísticas.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
+<link rel="stylesheet" href="css/tokens.css"><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/components.css">
+</head>
+<body data-theme="light">
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">🍅</div> PomoJd</div>
+  <div class="topbar-actions">
+    <button class="btn btn-icon" id="themeBtn" onclick="PomoUI.toggleTheme()" title="Tema">🌙</button>
+  </div>
+</header>
+<div class="shell">
+<nav class="sidebar">
+  <div class="nav-section">Menú</div>
+  <a class="nav-link" data-page="timer" href="index.html">🍅 <span class="label">Temporizador</span><span class="dot"></span></a>
+  <a class="nav-link" data-page="tasks" href="tareas.html">✅ <span class="label">Tareas</span><span class="dot"></span></a>
+  <a class="nav-link" data-page="stats" href="stats.html">📊 <span class="label">Estadísticas</span><span class="dot"></span></a>
+  <a class="nav-link" data-page="settings" href="config.html">⚙️ <span class="label">Ajustes</span><span class="dot"></span></a>
+  <div class="streak-card"><strong>💡 Tip</strong><div style="font-size:.85rem;color:var(--text-muted)">Pulsa <span class="kbd">Espacio</span> para iniciar/pausar. Todo se guarda automáticamente en tu base de datos local.</div></div>
+</nav>
+<main class="main">
+  <div class="page-head"><div><h1>Temporizador</h1><p>Enfócate 25 min, descansa, repite. Sin fricción.</p></div>
+    <div class="mode-tabs"><button data-mode="focus" class="active">Pomodoro</button><button data-mode="short">Corto</button><button data-mode="long">Largo</button></div>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="timer-wrap">
+        <div class="ring" id="ringBox"><svg viewBox="0 0 300 300"><circle class="ring-track" cx="150" cy="150" r="132"/><circle class="ring-prog" id="ringProg" cx="150" cy="150" r="132" stroke-dasharray="829.38" stroke-dashoffset="0"/></svg>
+          <div class="ring-center"><div class="timer-time" id="timerTime">25:00</div><div class="timer-label" id="timerLabel">Enfoque</div><div class="cycle-dots" id="cycleDots"></div></div>
+        </div>
+        <div class="timer-controls">
+          <button class="btn btn-ghost" id="resetBtn" title="Reiniciar">↺</button>
+          <button class="btn btn-primary btn-large" id="startBtn">▶ Iniciar</button>
+          <button class="btn btn-ghost" id="skipBtn" title="Saltar">⏭</button>
+        </div>
+        <div id="todayCount" style="color:var(--text-muted);font-size:.9rem">Hoy: 0 pomodoros</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <h3 style="margin:0 0 12px">Sesión actual</h3>
+        <label style="font-size:.8rem;color:var(--text-muted)">Proyecto</label>
+        <select id="projectSelect" class="input" style="margin:6px 0 12px"></select>
+        <label style="font-size:.8rem;color:var(--text-muted)">Tarea vinculada</label>
+        <select id="taskSelect" class="input" style="margin-top:6px"></select>
+        <div style="margin-top:12px"><div class="row" style="justify-content:space-between"><small style="color:var(--text-muted)" id="goalText">0/8 pomodoros</small><small style="color:var(--text-muted)">Meta diaria</small></div>
+        <div class="progress" style="margin-top:6px"><div id="goalBar" style="width:0%"></div></div></div>
+        <div class="row" style="margin-top:14px"><a class="btn" href="tareas.html">＋ Nueva tarea</a><a class="btn btn-ghost" href="stats.html">Ver estadísticas →</a></div>
+      </div>
+      <div class="card"><h3 style="margin:0 0 8px">¿Cómo funciona?</h3><p style="margin:0;color:var(--text-muted);font-size:.9rem">1️⃣ Elige proyecto y tarea → 2️⃣ Inicia el foco → 3️⃣ Al completar se guarda en la base de datos con tiempo real de estudio/trabajo → 4️⃣ Cada 4 pomodoros toca descanso largo. Todo queda en <a href="stats.html" style="text-decoration:underline">Estadísticas</a>.</p></div>
+    </div>
+  </div>
+</main>
+</div>
+<nav class="tabbar"><a data-page="timer" href="index.html">🍅<span>Timer</span></a><a data-page="tasks" href="tareas.html">✅<span>Tareas</span></a><a data-page="stats" href="stats.html">📊<span>Stats</span></a><a data-page="settings" href="config.html">⚙️<span>Ajustes</span></a></nav>
+<div id="toasts"></div>
+<script src="js/db.js"></script><script src="js/ui.js"></script><script src="js/timer.js"></script>
+<script>PomoUI.setActiveNav('timer');PomoTimer.initTimer();if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}</script>
+</body>
+</html>

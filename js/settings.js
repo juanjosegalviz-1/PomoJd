@@ -1,0 +1,37 @@
+/* Settings */
+async function init(){
+  await window.PomoDB.initDB();
+  const s=await window.PomoDB.getAllSettings();
+  document.getElementById('focusMin').value=s.focus_min??25;
+  document.getElementById('shortMin').value=s.short_min??5;
+  document.getElementById('longMin').value=s.long_min??15;
+  document.getElementById('dailyGoal').value=s.daily_goal??8;
+  const defs=[['sound','🔔 Sonido'],['notifications','🔔 Notificaciones'],['auto_start_break','▶ Auto-iniciar descansos'],['auto_start_focus','▶ Auto-iniciar foco']];
+  const box=document.getElementById('toggles');box.innerHTML='';
+  for(const [k,label] of defs){
+    const row=document.createElement('div');row.className='setting-row';
+    row.innerHTML=`<span>${label}</span>`;
+    const btn=document.createElement('button');btn.className='toggle';btn.setAttribute('aria-checked',String(!!s[k]));btn.setAttribute('aria-label',label);
+    btn.onclick=async()=>{const v=btn.getAttribute('aria-checked')!=='true';btn.setAttribute('aria-checked',String(v));await window.PomoDB.setSetting(k,v);toast('Guardado');};
+    row.appendChild(btn);box.appendChild(row);
+  }
+  document.getElementById('saveTimes').onclick=async()=>{
+    await window.PomoDB.setSetting('focus_min',parseInt(document.getElementById('focusMin').value)||25);
+    await window.PomoDB.setSetting('short_min',parseInt(document.getElementById('shortMin').value)||5);
+    await window.PomoDB.setSetting('long_min',parseInt(document.getElementById('longMin').value)||15);
+    await window.PomoDB.setSetting('daily_goal',parseInt(document.getElementById('dailyGoal').value)||8);
+    toast('Tiempos guardados ✅');
+  };
+  document.getElementById('expJson').onclick=async()=>{
+    const all=await window.PomoDB.getSessions({limit:5000});
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(all,null,2)],{type:'application/json'}));a.download='pomojd.json';a.click();
+  };
+  document.getElementById('wipe').onclick=async()=>{
+    if(!confirm('¿Borrar sesiones y tareas?')) return;
+    await window.PomoDB.clearSessions();
+    const tasks=await window.PomoDB.getTasks();
+    for(const t of tasks) await window.PomoDB.deleteTask(t.id);
+    toast('Datos borrados'); 
+  };
+}
+window.PomoSettings={init};
