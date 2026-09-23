@@ -68,14 +68,14 @@ async function complete(){
   if(navigator.vibrate) navigator.vibrate(200);
   if(S.mode==='focus'){
     S.cycle++;
-    await window.PomoUI.notify('¡Pomodoro completado! 🎉','Tómate un descanso.');
+    await window.PomoUI.notify('Foco completado. Para.','Tómate la pausa, que cuenta igual.');
     if(S.taskId){
       const tasks=await window.PomoDB.getTasks();
       const t=tasks.find(x=>x.id===S.taskId);
       if(t) await window.PomoDB.updateTask(S.taskId,{completed_pomos:(t.completed_pomos||0)+1});
     }
   } else {
-    await window.PomoUI.notify('Descanso terminado','¡De vuelta al foco!');
+    await window.PomoUI.notify('Pausa terminada','De vuelta. Una sola cosa.');
   }
   await refreshToday();
   const st=await window.PomoDB.getAllSettings();
@@ -120,9 +120,12 @@ function render(){
   const t=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   document.getElementById('timerTime').textContent=t;
   document.title=`${t} • PomoJd`;
-  const label={focus:'Enfoque',short:'Descanso corto',long:'Descanso largo'}[S.mode];
-  document.getElementById('timerLabel').textContent=label+(S.running?' • en curso':'');
-  document.getElementById('startBtn').textContent=S.running?'⏸ Pausar':'▶ Iniciar';
+  const label={focus:'FOCO',short:'PAUSA',long:'PAUSA LARGA'}[S.mode];
+  const mins=Math.round(S.dur[S.mode]/60);
+  const ringBox=document.getElementById('ringBox');
+  if(ringBox){ringBox.classList.toggle('break',S.mode!=='focus');ringBox.classList.toggle('glow',S.mode==='focus');}
+  document.getElementById('timerLabel').innerHTML=label+' · '+mins+' MIN'+(S.running?' — <b>en curso</b>':'');
+  document.getElementById('startBtn').textContent=S.running?'Pausar':'Empezar';
   const total=S.dur[S.mode]||1;
   const prog=1-(S.remaining/total);
   const ring=document.getElementById('ringProg');
@@ -148,13 +151,15 @@ async function refreshTaskSelect(){
 async function refreshToday(){
   const stats=await window.PomoDB.getStats();
   const el=document.getElementById('todayCount');
-  if(el) el.textContent=`Hoy: ${stats.todayPomos} pomodoros • ${stats.todayMin} min • Racha ${stats.streak}🔥`;
+  if(el) el.textContent=`hoy — ${stats.todayPomos} focos · ${stats.todayMin} min`;
+  const top=document.getElementById('topStreak');
+  if(top) top.textContent=stats.streak>1?`${stats.streak} días seguidos`:'';
   const goal=await window.PomoDB.getSetting('daily_goal',8);
   const pct=Math.min(100,Math.round(stats.todayPomos/goal*100));
   const bar=document.getElementById('goalBar');
   if(bar) bar.style.width=pct+'%';
   const txt=document.getElementById('goalText');
-  if(txt) txt.textContent=`${stats.todayPomos}/${goal} pomodoros (${pct}%)`;
+  if(txt) txt.textContent=`${stats.todayPomos}/${goal} · ${pct}%`;
 }
 function notifySilent(m){toast(m);}
 window.PomoTimer={initTimer};

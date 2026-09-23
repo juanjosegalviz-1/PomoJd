@@ -1,30 +1,42 @@
+/* PomoJd — negro real. Solo dark. */
 :root{
-  color-scheme: light;
-  --bg:#F8F7F4; --bg-elev:#FFFFFF; --bg-subtle:#EFEDE8;
-  --text:#1A1D21; --text-muted:#6B7280; --border:#E5E2DA;
-  --primary:#E5484D; --primary-hover:#C93A3F; --primary-soft:#FDECEC;
-  --focus:#2563EB; --success:#16A34A; --success-soft:#E6F6EC;
-  --warning:#D97706; --warning-soft:#FEF3C7; --info:#0E7490; --info-soft:#E0F5FA;
-  --ring-track:#E9E6DD; --ring-progress:#E5484D; --ring-break:#16A34A;
-  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1rem;
-  --fs-lg:1.25rem; --fs-xl:1.5rem; --fs-2xl:2rem;
-  --fs-timer:clamp(3.5rem,12vw,6rem);
-  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px;
-  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-full:999px;
-  --shadow-sm:0 1px 2px rgb(0 0 0/.06);
-  --shadow-md:0 4px 12px rgb(0 0 0/.08);
-  --shadow-lg:0 12px 32px rgb(0 0 0/.12);
-  --maxw:1120px; --nav-h:64px; --tabbar-h:68px;
-  --ease:cubic-bezier(.2,.8,.2,1); --dur-fast:150ms; --dur-med:300ms;
-}
-[data-theme="dark"]{
   color-scheme: dark;
-  --bg:#121417; --bg-elev:#1B1E23; --bg-subtle:#24282F;
-  --text:#F3F4F6; --text-muted:#9CA3AF; --border:#2A2F37;
-  --primary:#FF6363; --primary-hover:#FF7A7A; --primary-soft:#2E1D1D;
-  --focus:#60A5FA; --success:#34D399; --success-soft:#143325;
-  --warning:#FBBF24; --warning-soft:#30250F; --info:#22D3EE; --info-soft:#0f3038;
-  --ring-track:#2A2F37; --ring-progress:#FF6363; --ring-break:#34D399;
+  --bg-0:#08080A;
+  --bg-1:#0E0E11;
+  --bg-2:#141419;
+  --bg-3:#1C1C22;
+  --bg:var(--bg-0); --bg-elev:var(--bg-1); --bg-subtle:var(--bg-2);
+  --line:rgba(237,230,218,.08);
+  --line-strong:rgba(237,230,218,.15);
+  --border:var(--line);
+  --bone:#E9E1D3;
+  --bone-dim:#A9A19A;
+  --bone-faint:#6B6560;
+  --text:var(--bone); --text-muted:var(--bone-dim);
+  --tomato:#E14D2E; --tomato-hover:#EF5E3B; --tomato-active:#B93A24;
+  --primary:var(--tomato); --primary-hover:var(--tomato-hover); --primary-soft:rgba(225,77,46,.12);
+  --amber:#D9A441;
+  --sage:#7A8B6F;
+  --success:var(--sage); --success-soft:rgba(122,139,111,.14);
+  --focus:#D9A441; --info:#A9A19A; --info-soft:rgba(169,161,154,.12);
+  --warning:var(--amber); --warning-soft:rgba(217,164,65,.12);
+  --ring-track:#222228; --ring-progress:var(--tomato); --ring-break:var(--sage);
+  --font-display:"Fraunces","Iowan Old Style",Georgia,serif;
+  --font-sans:"Sora","Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono","Fragment Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --fs-xs:.72rem; --fs-sm:.86rem; --fs-base:.95rem;
+  --fs-lg:1.15rem; --fs-xl:1.5rem; --fs-2xl:2rem;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px;
+  --r-sm:6px; --r-md:14px; --r-lg:14px; --r-full:999px;
+  --shadow-sm:none; --shadow-md:none; --shadow-lg:none;
+  --glow-focus:0 0 26px rgba(225,77,46,.22);
+  --maxw:1060px; --nav-h:60px; --tabbar-h:66px;
+  --ease:cubic-bezier(.2,.8,.2,1); --dur-fast:140ms; --dur-med:280ms;
+}
+/* La app es negra por decisión. El tema claro queda desactivado. */
+[data-theme="light"]{
+  color-scheme: dark;
+  --bg:var(--bg-0); --bg-elev:var(--bg-1); --bg-subtle:var(--bg-2);
+  --border:var(--line); --text:var(--bone); --text-muted:var(--bone-dim);
+  --primary:var(--tomato); --primary-hover:var(--tomato-hover); --primary-soft:rgba(225,77,46,.12);
 }
