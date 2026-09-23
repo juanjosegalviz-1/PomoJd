@@ -80,7 +80,8 @@ button{font:inherit;color:inherit}
 @media(max-width:640px){
   .sidebar{display:none}
   .main{padding:24px 18px calc(var(--tabbar-h) + 30px)}
-  .grid-2,.grid-4{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
   .grid-4 .card{padding:14px}
   .stat-card .num{font-size:1.3rem!important}
   .tabbar{
